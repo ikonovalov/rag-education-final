@@ -1,4 +1,5 @@
 kagglehub
+streamlit
 
 langgraph
 langchain-text-splitters
