@@ -18,7 +18,7 @@ large_reports = [d for d in reports_docs if len(d.page_content) >= SZ_LIMIT]
 normal_records = [d for d in reports_docs if len(d.page_content) < SZ_LIMIT]
 print(f"Total: {len(reports_docs)}. Large(>{SZ_LIMIT}): {len(large_reports)}. Normal: {len(normal_records)}")
 
-reports_docs = random.sample(normal_records, k=200)
+reports_docs = reports_docs[100:500]
 
 vector_store = FAISSVectorStore()
 rs = vector_store.add_documents(reports_docs)

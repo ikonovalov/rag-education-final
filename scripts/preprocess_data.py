@@ -23,18 +23,11 @@ def extract_field(tag: str, text: str) -> str:
         return ""
 
 def cleanup(docs: list[Document]):
-    # Old Afganistan reports :(
-    # for doc in docs:
-    #     text = doc.page_content
-    #     text = text.replace("&amp;apos;", "'")
-    #     text = text.replace("&amp;", SPACE)
-    #     text = text.replace("amp;", SPACE)
-    #     text = text.replace("apos;", SPACE)
-    #     text = text.replace("**", BLANK)
-    #     text = text.replace("__", BLANK)
-    #     text = text.replace("\t", BLANK)
-    #     text = text.replace("  ", SPACE)
-    #     doc.page_content = text
+    # for d in docs:
+    #     text = d.page_content
+    #     # trim first ": number\n"
+    #     start_pos = text.find("\n")
+    #     d.page_content = text[start_pos+1:]
     return docs
 
 def truncate_oversized(docs: list[Document]):
