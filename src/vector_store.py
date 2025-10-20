@@ -1,12 +1,11 @@
 import os
 from typing import List, Tuple
 
+import faiss
 from langchain_community.docstore import InMemoryDocstore
+from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from langchain_gigachat.embeddings import GigaChatEmbeddings
-from langchain_community.vectorstores import FAISS
-import faiss
-import uuid
 
 from src.utils import (giga_api_key, giga_api_scope)
 
@@ -69,6 +68,8 @@ class FAISSVectorStore(BaseVectorStore):
     def similarity_search_with_score(self, query, k=3) -> List[Tuple[Document, float]]:
         return self.vector_store.similarity_search_with_score(query, k)
 
+    def as_retriever(self):
+        return self.vector_store.as_retriever()
 
     def save(self, folder="faiss_store"):
         self.vector_store.save_local(folder)

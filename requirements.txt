@@ -1,6 +1,11 @@
+kagglehub
+
 langgraph
 langchain-text-splitters
 langchain-community
 faiss-cpu
 langchain_gigachat
-kagglehub
+
+
+rank_bm25
+pickle

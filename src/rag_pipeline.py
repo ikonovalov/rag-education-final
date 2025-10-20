@@ -1,15 +1,20 @@
-from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, \
-    AIMessagePromptTemplate
-
-from src.generator import Generator
-from src.vector_store import FAISSVectorStore
+from langchain.retrievers import EnsembleRetriever
+from langchain_core.documents import Document
+from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langgraph.graph import START, StateGraph
 from typing_extensions import List, TypedDict
-from langchain_core.documents import Document
 
+from src.bm25_store import BM25Store
+from src.generator import LLMGenerator
+from src.vector_store import FAISSVectorStore
 
-vector_store = FAISSVectorStore("../data/faiss_store")
-generator = Generator()
+faiss_vector_store = FAISSVectorStore("../data/faiss_store")
+faiss_retriever = faiss_vector_store.as_retriever()
+
+bm25_store = BM25Store("../data/bm25")
+bm25_retriever = bm25_store.as_retriever()
+
+generator = LLMGenerator()
 
 prompt = ChatPromptTemplate.from_messages([
     SystemMessagePromptTemplate.from_template(
@@ -30,11 +35,12 @@ class State(TypedDict):
     answer: str
 
 def retrieve_vectored(state: State):
-    retrieved_doc_and_scores = vector_store.similarity_search_with_score(state["question"])
-    for d,s in retrieved_doc_and_scores:
-        print(f"doc {d.metadata['row']} => {s:3f}")
-
-    return {"retrieved": [document for document, _ in retrieved_doc_and_scores]}
+    ensemble = EnsembleRetriever(
+        retrievers = [faiss_retriever, bm25_retriever],
+        weights=[0.5, 0.5],
+    )
+    retrieved = ensemble.invoke(state["question"])
+    return {"retrieved": [document for document in retrieved]}
 
 def generate(state: State):
     docs_content = "\n\n".join(doc.page_content for doc in state["retrieved"])

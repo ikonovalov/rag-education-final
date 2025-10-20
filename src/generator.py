@@ -3,7 +3,7 @@ from langchain_gigachat import GigaChat
 from src.utils import (giga_api_key, giga_api_scope)
 
 
-class Generator:
+class LLMGenerator:
     """Generator отвечает за работу с генеративной моделью"""
 
     def __init__(self, config=None):
