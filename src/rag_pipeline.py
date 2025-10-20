@@ -52,6 +52,6 @@ graph_builder = StateGraph(State).add_sequence([retrieve_vectored, generate])
 graph_builder.add_edge(START, "retrieve_vectored")
 graph = graph_builder.compile()
 
-response = graph.invoke({"question": "Найди самый простой рецепт из картошки и соли"})
+response = graph.invoke({"question": "Найди самый рецепт из картошки и чего-то острого"})
 print(response["answer"])
 

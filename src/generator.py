@@ -1,3 +1,6 @@
+from typing import List
+
+from langchain_core.messages import BaseMessage
 from langchain_gigachat import GigaChat
 
 from src.utils import (giga_api_key, giga_api_scope)
@@ -17,5 +20,5 @@ class LLMGenerator:
             temperature=0.3,
         )
 
-    def invoke(self, messages):
+    def invoke(self, messages: List[BaseMessage]):
         return self.llm.invoke(messages)
