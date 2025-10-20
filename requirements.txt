@@ -3,5 +3,4 @@ langchain-text-splitters
 langchain-community
 faiss-cpu
 langchain_gigachat
-
-py7zr
+kagglehub

@@ -4,19 +4,37 @@ SPACE = " "
 BLANK = ""
 SZ_LIMIT = 6000
 
-
-def cleanup(docs: list[Document]):
+def extract_meta_and_propagate(docs: list[Document]):
     for doc in docs:
         text = doc.page_content
-        text = text.replace("&amp;apos;", "'")
-        text = text.replace("&amp;", SPACE)
-        text = text.replace("amp;", SPACE)
-        text = text.replace("apos;", SPACE)
-        text = text.replace("**", BLANK)
-        text = text.replace("__", BLANK)
-        text = text.replace("\t", BLANK)
-        text = text.replace("  ", SPACE)
-        doc.page_content = text
+        title = extract_field("Title: ", text)
+        image = extract_field("Image_Name: ", text)
+        doc.metadata['title'] = title
+        doc.metadata['image'] = image
+
+def extract_field(tag: str, text: str) -> str:
+    # Находим позицию маркера
+    start_pos = text.find(tag) + len(tag)  # Смещаемся после маркера
+    end_pos = text.find("\n", start_pos)  # Ищем перенос строки после маркера
+    if start_pos != -1 and end_pos != -1:
+        result = text[start_pos:end_pos]
+        return result
+    else:
+        return ""
+
+def cleanup(docs: list[Document]):
+    # Old Afganistan reports :(
+    # for doc in docs:
+    #     text = doc.page_content
+    #     text = text.replace("&amp;apos;", "'")
+    #     text = text.replace("&amp;", SPACE)
+    #     text = text.replace("amp;", SPACE)
+    #     text = text.replace("apos;", SPACE)
+    #     text = text.replace("**", BLANK)
+    #     text = text.replace("__", BLANK)
+    #     text = text.replace("\t", BLANK)
+    #     text = text.replace("  ", SPACE)
+    #     doc.page_content = text
     return docs
 
 def truncate_oversized(docs: list[Document]):

@@ -6,6 +6,7 @@ from langchain_core.documents import Document
 from langchain_gigachat.embeddings import GigaChatEmbeddings
 from langchain_community.vectorstores import FAISS
 import faiss
+import uuid
 
 from src.utils import (giga_api_key, giga_api_scope)
 
@@ -57,10 +58,10 @@ class FAISSVectorStore(BaseVectorStore):
             else:
                 raise Exception("Store not found")
 
-    def add_documents(self, docs) -> List[str]:
-        uuid = [d.metadata["source"] for d in docs]
-        ids = self.vector_store.add_documents(documents=docs, ids=uuid)
-        return ids
+    def add_documents(self, docs: List[Document]) -> List[str]:
+        rows_as_id = [str(d.metadata["row"]) for d in docs]
+        stored_ids = self.vector_store.add_documents(documents=docs, ids=rows_as_id)
+        return stored_ids
 
     def similarity_search(self, query, k=3) -> List[Document]:
         return self.vector_store.similarity_search(query, k)

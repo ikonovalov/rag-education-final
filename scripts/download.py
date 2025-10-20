@@ -1,8 +1,9 @@
-from scripts.utils import download_file, extract_7z
+import os
+import kagglehub
 
-url = "http://leakmirror.wikileaks.org/file/straw-glass-and-bottle/afg-war-diary.csv.7z"
-local_filename = "afg-war-diary.csv.7z"
-extract_dir = "../data/raw/wikileaks/afg-war-diary"
+#recipen = kagglehub.dataset_download("paultimothymooney/recipenlg") # save to cache
+#os.rename(recipen, "../data/raw/recipenlg") # move to local
+# Too large
 
-if download_file(url, local_filename):
-    extract_7z(local_filename, extract_dir)
+recipen = kagglehub.dataset_download("pes12017000148/food-ingredients-and-recipe-dataset-with-images") # save to cache
+os.rename(recipen, "../data/raw/pes12017000148") # move to local

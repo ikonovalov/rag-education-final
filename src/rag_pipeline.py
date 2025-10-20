@@ -12,7 +12,9 @@ generator = Generator()
 
 prompt = ChatPromptTemplate.from_messages([
     SystemMessagePromptTemplate.from_template(
+        "Ты повар, который разбирается в любой кухне."
         "Используй следующий контекст для ответа: {context}"
+        "В ответе обязательно указывай строку (row), на которой ты нашел рецепт."
     ),
     HumanMessagePromptTemplate.from_template(
         "Пользовательский вопрос: {question}"
@@ -24,7 +26,7 @@ class State(TypedDict):
     retrieved: List[Document]
     answer: str
 
-def retrieve(state: State):
+def retrieve_vectored(state: State):
     retrieved_docs = vector_store.similarity_search(state["question"])
     return {"retrieved": retrieved_docs}
 
@@ -34,9 +36,10 @@ def generate(state: State):
     answer =  generator.invoke(messages)
     return {"answer": answer.content}
 
-graph_builder = StateGraph(State).add_sequence([retrieve, generate])
+graph_builder = StateGraph(State).add_sequence([retrieve_vectored, generate])
 graph_builder.add_edge(START, "retrieve")
 graph = graph_builder.compile()
 
-response = graph.invoke({"question": "Расскажи о случаях нападения на медицинские учереждения в Багдаде"})
+response = graph.invoke({"question": "Хочется чего-то из хумуса. Что порекомендуешь?"})
 print(response["answer"])
+
