@@ -33,6 +33,7 @@ def retrieve_hybrid(state: State):
     ensemble = EnsembleRetriever(
         retrievers = [faiss_retriever, bm25_retriever], # можно bm25 попробовать через MultiQueryRetriever погонять
         weights=[0.5, 0.5],
+        id_key = "row"
     )
     retrieved = ensemble.invoke(state["rephrased"])[:5]
     for r in retrieved:
