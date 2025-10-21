@@ -19,7 +19,7 @@ large_reports = [d for d in reports_docs if len(d.page_content) >= SZ_LIMIT]
 normal_records = [d for d in reports_docs if len(d.page_content) < SZ_LIMIT]
 print(f"Total: {len(reports_docs)}. Large(>{SZ_LIMIT}): {len(large_reports)}. Normal: {len(normal_records)}")
 
-reports_docs_short = reports_docs[0:1000]
+reports_docs_short = normal_records
 print(f"Documents count {len(reports_docs_short)}")
 
 # Vectorization
