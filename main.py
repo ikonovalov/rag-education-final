@@ -1,26 +1,30 @@
 import streamlit as st
-from src.rag_pipeline import graph
+
+# Инициализация истории чата в session_state
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
 # Заголовок приложения
-st.title("Система 'Запрос-Ответ'")
+st.title("AI-Шеффф")
 
-# Создаем текстовое поле для ввода запроса
-user_input = st.text_input("Введите ваш запрос:", "")
+# Отображение истории чата
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-# Создаем кнопку для отправки запроса
-if st.button("Отправить"):
-    if user_input:
-        # Здесь можно добавить логику обработки запроса, например, вызов API
-        response = graph.response({"question": user_input})
-        st.image("C:\\Users\\igor_\\IdeaProjects\\rag-education-final\\data\\raw\\pes12017000148\\Food Images\\Food Images\\3-ingredient-buttermilk-biscuits.jpg", caption="Ваше изображение", use_container_width =True)
-        st.write(response["answer"])
-    else:
-        st.warning("Пожалуйста, введите запрос!")
+# Поле ввода для пользователя
+if prompt := st.chat_input("Введите ваш запрос:"):
+    # Добавление сообщения пользователя в историю
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    # Отображение сообщения пользователя
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-# Инструкция для пользователя
-st.markdown("""
-### Инструкция:
-1. Введите ваш запрос в текстовое поле.
-2. Нажмите кнопку "Отправить".
-3. Получите ответ ниже.
-""")
+    # Генерация ответа (здесь простой эхо-ответ для примера)
+    response = f"Вы сказали: {prompt}. Это пример ответа."
+
+    # Добавление ответа ассистента в историю
+    st.session_state.messages.append({"role": "assistant", "content": response})
+    # Отображение ответа ассистента
+    with st.chat_message("assistant"):
+        st.markdown(response)
