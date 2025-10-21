@@ -12,6 +12,8 @@ if "messages" not in st.session_state:
 # Заголовок приложения
 st.title("AI-Шеффф")
 
+st.image("C:\\Users\\igor_\\IdeaProjects\\rag-education-final\\data\\raw\\pes12017000148\\Food Images\\Food Images\\3-ingredient-buttermilk-biscuits.jpg", caption="Ваше изображение", use_container_width =True)
+
 # Отображение истории чата
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
