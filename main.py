@@ -1,5 +1,10 @@
 import streamlit as st
 
+if "graph" not in st.session_state:
+    from src.rag_pipeline import graph
+    st.session_state.graph=graph
+
+
 # Инициализация истории чата в session_state
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -13,7 +18,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # Поле ввода для пользователя
-if prompt := st.chat_input("Введите ваш запрос:"):
+if prompt := st.chat_input("Давай поговорим о еде"):
     # Добавление сообщения пользователя в историю
     st.session_state.messages.append({"role": "user", "content": prompt})
     # Отображение сообщения пользователя
@@ -21,7 +26,8 @@ if prompt := st.chat_input("Введите ваш запрос:"):
         st.markdown(prompt)
 
     # Генерация ответа (здесь простой эхо-ответ для примера)
-    response = f"Вы сказали: {prompt}. Это пример ответа."
+    graph_response = st.session_state.graph.invoke({"question": prompt})
+    response = graph_response["answer"]
 
     # Добавление ответа ассистента в историю
     st.session_state.messages.append({"role": "assistant", "content": response})

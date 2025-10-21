@@ -8,10 +8,10 @@ from src.bm25_store import BM25Store
 from src.generator import LLMGenerator
 from src.vector_store import FAISSVectorStore
 
-faiss_vector_store = FAISSVectorStore("../data/faiss_store")
+faiss_vector_store = FAISSVectorStore("data/faiss_store")
 faiss_retriever = faiss_vector_store.as_retriever(search_kwargs={"k": 10})
 
-bm25_store = BM25Store("../data/bm25")
+bm25_store = BM25Store("data/bm25")
 bm25_retriever = bm25_store.as_retriever()
 bm25_retriever.k=10
 
@@ -72,6 +72,6 @@ graph_builder = StateGraph(State).add_sequence([rephrase, retrieve_hybrid, gener
 graph_builder.add_edge(START, "rephrase")
 graph = graph_builder.compile()
 
-response = graph.invoke({"question": "Найди самый рецепт из картошки и чего-то острого"})
-print(response["answer"])
+# response = graph.invoke({"question": "Найди самый рецепт из картошки и чего-то острого"})
+# print(response["answer"])
 
