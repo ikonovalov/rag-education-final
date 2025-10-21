@@ -9,11 +9,11 @@ from src.generator import LLMGenerator
 from src.vector_store import FAISSVectorStore
 
 faiss_vector_store = FAISSVectorStore("../data/faiss_store")
-faiss_retriever = faiss_vector_store.as_retriever(search_kwargs={"k": 2})
+faiss_retriever = faiss_vector_store.as_retriever(search_kwargs={"k": 10})
 
 bm25_store = BM25Store("../data/bm25")
 bm25_retriever = bm25_store.as_retriever()
-bm25_retriever.k=2
+bm25_retriever.k=10
 
 generator = LLMGenerator()
 
@@ -54,10 +54,10 @@ def rephrase(state: State):
 
 def retrieve_hybrid(state: State):
     ensemble = EnsembleRetriever(
-        retrievers = [faiss_retriever, bm25_retriever],
+        retrievers = [faiss_retriever, bm25_retriever], # можно bm25 попробовать через MultiQueryRetriever погонять
         weights=[0.5, 0.5],
     )
-    retrieved = ensemble.invoke(state["rephrased"])
+    retrieved = ensemble.invoke(state["rephrased"])[:5]
     for r in retrieved:
         print(f"Doc id={r.id} => {r.metadata['title']}")
     return {"retrieved": [document for document in retrieved]}
