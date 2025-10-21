@@ -1,4 +1,5 @@
 import streamlit as st
+from src.rag_pipeline import graph
 
 # Заголовок приложения
 st.title("Система 'Запрос-Ответ'")
@@ -10,10 +11,9 @@ user_input = st.text_input("Введите ваш запрос:", "")
 if st.button("Отправить"):
     if user_input:
         # Здесь можно добавить логику обработки запроса, например, вызов API
-        response = f"Вы ввели: {user_input}. Это пример ответа!"
-        st.write("**Ответ:**")
+        response = graph.response({"question": user_input})
         st.image("C:\\Users\\igor_\\IdeaProjects\\rag-education-final\\data\\raw\\pes12017000148\\Food Images\\Food Images\\3-ingredient-buttermilk-biscuits.jpg", caption="Ваше изображение", use_container_width =True)
-        st.write(response)
+        st.write(response["answer"])
     else:
         st.warning("Пожалуйста, введите запрос!")
 

@@ -23,7 +23,8 @@ class BM25Store:
     def add_documents(self, docs: List[Document]):
         self.retriever = BM25Retriever.from_documents(
             documents=docs,
-            preprocess_func=self.tokenizer,
+            preprocess_func=self._prepared_tokenization,
+            k=3,
         )
 
     def as_retriever(self):

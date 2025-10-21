@@ -68,8 +68,10 @@ class FAISSVectorStore(BaseVectorStore):
     def similarity_search_with_score(self, query, k=3) -> List[Tuple[Document, float]]:
         return self.vector_store.similarity_search_with_score(query, k)
 
-    def as_retriever(self):
-        return self.vector_store.as_retriever()
+    def as_retriever(self, search_kwargs=None):
+        if search_kwargs is None:
+            search_kwargs = {}
+        return self.vector_store.as_retriever(search_kwargs=search_kwargs)
 
     def save(self, folder="faiss_store"):
         self.vector_store.save_local(folder)

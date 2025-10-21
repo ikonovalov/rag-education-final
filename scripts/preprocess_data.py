@@ -13,6 +13,7 @@ def extract_meta_and_propagate(docs: list[Document]):
         doc.metadata['title'] = title
         doc.metadata['image'] = image
         doc.metadata['ingredients'] = ingredients
+        doc.id = doc.metadata['row']
 
 def extract_field(tag: str, text: str) -> str:
     # Находим позицию маркера

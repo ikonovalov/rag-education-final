@@ -20,14 +20,13 @@ large_reports = [d for d in reports_docs if len(d.page_content) >= SZ_LIMIT]
 normal_records = [d for d in reports_docs if len(d.page_content) < SZ_LIMIT]
 print(f"Total: {len(reports_docs)}. Large(>{SZ_LIMIT}): {len(large_reports)}. Normal: {len(normal_records)}")
 
-reports_docs_short = reports_docs[100:500]
+reports_docs_short = reports_docs[0:1000]
+print(f"Documents count {len(reports_docs_short)}")
 
 # Vectorization
-# vector_store = FAISSVectorStore()
-# rs = vector_store.add_documents(reports_docs_short)
-# vector_store.save("../data/faiss_store")
-# print(reports_docs)
-# print(f"{len(rs)} vectors stored")
+vector_store = FAISSVectorStore()
+vector_store.add_documents(reports_docs_short)
+vector_store.save("../data/faiss_store")
 
 # BM25
 bm25_retriever = BM25Store()
