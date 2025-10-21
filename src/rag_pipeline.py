@@ -48,7 +48,3 @@ def generate(state: State):
 graph_builder = StateGraph(State).add_sequence([rephrase, retrieve_hybrid, generate])
 graph_builder.add_edge(START, "rephrase")
 graph = graph_builder.compile()
-
-# response = graph.invoke({"question": "Найди самый рецепт из картошки и чего-то острого"})
-# print(response["answer"])
-
