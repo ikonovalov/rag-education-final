@@ -1,9 +1,8 @@
 from langchain_community.document_loaders.csv_loader import CSVLoader
 
-from scripts.preprocess_data import cleanup, truncate_oversized, SZ_LIMIT, extract_meta_and_propagate
+from scripts.preprocess_data import cleanup, SZ_LIMIT, extract_meta_and_propagate
 from src.bm25_store import BM25Store
 from src.vector_store import FAISSVectorStore
-
 
 datafile = "../data/raw/pes12017000148/Food Ingredients and Recipe Dataset with Image Name Mapping.csv"
 
