@@ -1,7 +1,7 @@
 from langchain_community.document_loaders.csv_loader import CSVLoader
 
 from scripts.preprocess_data import cleanup, truncate_oversized, SZ_LIMIT, extract_meta_and_propagate
-from src.bm25_index_retriever import BM25IndexRetriever
+from src.bm25_store import BM25Store
 from src.vector_store import FAISSVectorStore
 
 
@@ -30,7 +30,7 @@ reports_docs_short = reports_docs[100:500]
 # print(f"{len(rs)} vectors stored")
 
 # BM25
-bm25_retriever = BM25IndexRetriever()
+bm25_retriever = BM25Store()
 bm25_retriever.add_documents(reports_docs_short)
 bm25_retriever.save("../data/bm25")
 
