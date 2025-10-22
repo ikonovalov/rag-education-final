@@ -7,6 +7,6 @@ langchain-community
 faiss-cpu
 langchain_gigachat
 
-
+flashrank
 rank_bm25
 pickle

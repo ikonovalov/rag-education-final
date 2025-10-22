@@ -43,7 +43,14 @@ if prompt := st.chat_input("Давай поговорим о еде"):
     with st.chat_message("assistant"):
         st.markdown(ai_answer)
 
-    id_n_image = [(doc.id, f"{doc.metadata['image']}.jpg", re.search(str(doc.id), ai_answer)) for doc in graph_response['retrieved']]
+    id_n_image = [
+        (
+            doc.metadata['row'],
+            f"{doc.metadata['image']}.jpg",
+            re.search(str(doc.metadata['row']), ai_answer)
+        )
+        for doc in graph_response['retrieved']
+    ]
     matched = [m for m in id_n_image if m[2] is not None]
     print(f"{id_n_image}")
     print(f"{matched}")
