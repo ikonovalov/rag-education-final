@@ -24,11 +24,11 @@ ensemble_retriever = EnsembleRetriever(
     id_key = "row"                                      # from metadata
 )
 
-# and compress
-compressor = FlashrankRerank(client=Ranker(model_name="ms-marco-MultiBERT-L-12"))
-compressor.top_n=4
+# and reranker
+reranker = FlashrankRerank(client=Ranker(model_name="ms-marco-MultiBERT-L-12"))
+reranker.top_n=3
 compression_retriever = ContextualCompressionRetriever(
-    base_compressor=compressor, base_retriever=ensemble_retriever,
+    base_compressor=reranker, base_retriever=ensemble_retriever,
 )
 
 generator = LLMGenerator()
