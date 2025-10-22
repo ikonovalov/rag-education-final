@@ -1,7 +1,10 @@
+import os
+
 from flashrank import Ranker
 from langchain.retrievers import EnsembleRetriever, ContextualCompressionRetriever
 from langchain_community.document_compressors import FlashrankRerank
 from langchain_core.documents import Document
+from langfuse.langchain import CallbackHandler
 from langgraph.graph import START, StateGraph
 from typing_extensions import List, TypedDict
 
@@ -9,6 +12,11 @@ from src.bm25_store import BM25Store
 from src.generator import LLMGenerator
 from src.prompts import rephrase_prompt, chief_prompt
 from src.vector_store import FAISSVectorStore
+
+graph_callbacks = []
+
+if os.getenv("LANGFUSE_AUTH") is not None:
+    graph_callbacks.append(CallbackHandler())
 
 faiss_vector_store = FAISSVectorStore("data/faiss_store")
 faiss_retriever = faiss_vector_store.as_retriever(search_kwargs={"k": 5})

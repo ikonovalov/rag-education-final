@@ -7,7 +7,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from langchain_gigachat.embeddings import GigaChatEmbeddings
 
-from src.utils import (giga_api_key, giga_api_scope)
+from src.utils import (GIGACHAT_API_KEY, GIGACHAT_API_SCOPE)
 
 
 class BaseVectorStore:
@@ -16,8 +16,8 @@ class BaseVectorStore:
         if config is None:
             config = []
         self.embedding_model = GigaChatEmbeddings(
-            credentials=giga_api_key,
-            scope=giga_api_scope,
+            credentials=GIGACHAT_API_KEY,
+            scope=GIGACHAT_API_SCOPE,
             verify_ssl_certs=False,
             model="EmbeddingsGigaR" # так не влезало
         )

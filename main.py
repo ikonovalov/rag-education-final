@@ -3,10 +3,12 @@ import re
 from pathlib import Path
 
 import streamlit as st
+from langchain_core.runnables import RunnableConfig
 
 if "graph" not in st.session_state:
-    from src.rag_pipeline import graph
+    from src.rag_pipeline import (graph, graph_callbacks)
     st.session_state.graph=graph
+    st.session_state.graph_callbacks=graph_callbacks
 
 
 # Инициализация истории чата в session_state
@@ -34,7 +36,9 @@ if prompt := st.chat_input("Давай поговорим о еде"):
         st.markdown(prompt)
 
     # Генерация ответа (здесь простой эхо-ответ для примера)
-    graph_response = st.session_state.graph.invoke({"question": prompt})
+    graph_response = st.session_state.graph.invoke({"question": prompt}, config=RunnableConfig(
+        callbacks=st.session_state.graph_callbacks,
+    ))
     ai_answer = graph_response["answer"]
     print(ai_answer)
 

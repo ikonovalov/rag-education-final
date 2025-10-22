@@ -1,5 +1,10 @@
+import base64
 import os
-from typing import List
 
-giga_api_key = os.getenv("GIGACHAT_API_KEY", "")
-giga_api_scope = os.getenv("GIGACHAT_API_SCOPE", "GIGACHAT_API_B2B")
+GIGACHAT_API_KEY = os.getenv("GIGACHAT_API_KEY", "")
+GIGACHAT_API_SCOPE = os.getenv("GIGACHAT_API_SCOPE", "GIGACHAT_API_B2B")
+
+LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY")
+LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY")
+LANGFUSE_AUTH = base64.b64encode(f"{LANGFUSE_PUBLIC_KEY}:{LANGFUSE_SECRET_KEY}".encode()).decode()
+os.environ['LANGFUSE_AUTH'] = LANGFUSE_AUTH
