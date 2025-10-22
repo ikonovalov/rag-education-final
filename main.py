@@ -57,7 +57,7 @@ if prompt := st.chat_input("Давай поговорим о еде"):
     img_path=None
     if len(matched) == 1:
         img_path = Path(os.getcwd()) / "data" / "raw" / "pes12017000148" / "Food Images" /  "Food Images" / str(matched[0][1])
-        st.image(img_path, use_container_width =True)
+        st.image(img_path, width='stretch')
 
     # Добавление ответа ассистента в историю
     ai_message = {"role": "assistant", "content": ai_answer, "image": img_path}
