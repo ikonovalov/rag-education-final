@@ -18,7 +18,7 @@ bm25_retriever = bm25_store.as_retriever()
 bm25_retriever.k=5
 
 # Combine
-ensemble = EnsembleRetriever(
+ensemble_retriever = EnsembleRetriever(
     retrievers = [faiss_retriever, bm25_retriever],     # можно bm25 попробовать через MultiQueryRetriever погонять
     weights=[0.5, 0.5],
     id_key = "row"                                      # from metadata
@@ -28,7 +28,7 @@ ensemble = EnsembleRetriever(
 compressor = FlashrankRerank(client=Ranker(model_name="ms-marco-MultiBERT-L-12"))
 compressor.top_n=4
 compression_retriever = ContextualCompressionRetriever(
-    base_compressor=compressor, base_retriever=ensemble,
+    base_compressor=compressor, base_retriever=ensemble_retriever,
 )
 
 generator = LLMGenerator()
