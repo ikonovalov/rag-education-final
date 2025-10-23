@@ -5,7 +5,7 @@ from langchain.retrievers import EnsembleRetriever, ContextualCompressionRetriev
 from langchain_community.document_compressors import FlashrankRerank
 from langchain_core.documents import Document
 from langfuse.langchain import CallbackHandler
-from langgraph.graph import START, StateGraph, MessagesState
+from langgraph.graph import START, END, StateGraph, MessagesState
 from typing_extensions import List
 
 from src.bm25_store import BM25Store
@@ -73,6 +73,13 @@ def generate_answer(state: State):
     answer =  generator.invoke(messages)
     return {"answer": answer.content}
 
-graph_builder = StateGraph(State).add_sequence([rephrase, retrieve_hybrid, generate_answer])
+graph_builder = StateGraph(State)
+graph_builder.add_node("rephrase", rephrase)
+graph_builder.add_node("retrieve_hybrid", retrieve_hybrid)
+graph_builder.add_node("generate_answer", generate_answer)
+
 graph_builder.add_edge(START, "rephrase")
+graph_builder.add_edge("rephrase", "retrieve_hybrid")
+graph_builder.add_edge("retrieve_hybrid", "generate_answer")
+graph_builder.add_edge("generate_answer", END)
 graph = graph_builder.compile()
