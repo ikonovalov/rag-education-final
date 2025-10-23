@@ -16,7 +16,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # Заголовок приложения
-st.title("AI-Шеффф")
+st.title("Giga-шеффф")
 
 #st.image("C:\\Users\\igor_\\IdeaProjects\\rag-education-final\\data\\raw\\pes12017000148\\Food Images\\Food Images\\3-ingredient-buttermilk-biscuits.jpg", caption="Ваше изображение", use_container_width =True)
 
@@ -61,7 +61,7 @@ if prompt := st.chat_input("Давай поговорим о еде"):
     img_path=None
     if len(matched) == 1:
         img_path = Path(os.getcwd()) / "data" / "raw" / "pes12017000148" / "Food Images" /  "Food Images" / str(matched[0][1])
-        st.image(img_path, width='stretch')
+        st.image(img_path, width='content')
 
     # Добавление ответа ассистента в историю
     ai_message = {"role": "assistant", "content": ai_answer, "image": img_path}
