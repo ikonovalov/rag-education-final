@@ -21,4 +21,7 @@ class LLMGenerator:
         )
 
     def invoke(self, messages: List[BaseMessage]):
-        return self.llm.invoke(messages)
+        return self.model().invoke(messages)
+
+    def model(self):
+        return self.llm

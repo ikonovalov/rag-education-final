@@ -5,8 +5,8 @@ from langchain.retrievers import EnsembleRetriever, ContextualCompressionRetriev
 from langchain_community.document_compressors import FlashrankRerank
 from langchain_core.documents import Document
 from langfuse.langchain import CallbackHandler
-from langgraph.graph import START, StateGraph
-from typing_extensions import List, TypedDict
+from langgraph.graph import START, StateGraph, MessagesState
+from typing_extensions import List
 
 from src.bm25_store import BM25Store
 from src.generator import LLMGenerator
@@ -44,12 +44,12 @@ ensemble_retriever = EnsembleRetriever(
 reranker = FlashrankRerank(client=Ranker(model_name=ranker_model))
 reranker.top_n= flash_reranker_top_n
 compression_retriever = ContextualCompressionRetriever(
-    base_compressor=reranker, base_retriever=ensemble_retriever,
+    base_compressor=reranker, base_retriever=ensemble_retriever, name="Reranker"
 )
 
 generator = LLMGenerator()
 
-class State(TypedDict):
+class State(MessagesState):
     question: str
     rephrased: str
     retrieved: List[Document]
@@ -67,12 +67,12 @@ def retrieve_hybrid(state: State):
         print(f"retrieve_hybrid: row={r.metadata['row']} => {r.metadata['title']}")
     return {"retrieved": [document for document in retrieved_docs]}
 
-def generate(state: State):
+def generate_answer(state: State):
     docs_content = "\n\n".join(doc.page_content for doc in state["retrieved"])
     messages = chief_prompt.invoke({"question": state["question"], "context": docs_content})
     answer =  generator.invoke(messages)
     return {"answer": answer.content}
 
-graph_builder = StateGraph(State).add_sequence([rephrase, retrieve_hybrid, generate])
+graph_builder = StateGraph(State).add_sequence([rephrase, retrieve_hybrid, generate_answer])
 graph_builder.add_edge(START, "rephrase")
 graph = graph_builder.compile()
