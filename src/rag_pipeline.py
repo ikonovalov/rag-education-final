@@ -13,28 +13,36 @@ from src.generator import LLMGenerator
 from src.prompts import rephrase_prompt, chief_prompt
 from src.vector_store import FAISSVectorStore
 
+ranker_model = "ms-marco-MultiBERT-L-12"
+
+bm25_retriever_top_k = 5
+faiss_retriever_top_k = 5
+flash_reranker_top_n = 3
+ensemble_bm25_weight = 0.5
+ensemble_faiss_weight = 0.5
+
 graph_callbacks = []
 
 if os.getenv("LANGFUSE_AUTH") is not None:
     graph_callbacks.append(CallbackHandler())
 
 faiss_vector_store = FAISSVectorStore("data/faiss_store")
-faiss_retriever = faiss_vector_store.as_retriever(search_kwargs={"k": 5})
+faiss_retriever = faiss_vector_store.as_retriever(search_kwargs={"k": faiss_retriever_top_k})
 
 bm25_store = BM25Store("data/bm25")
 bm25_retriever = bm25_store.as_retriever()
-bm25_retriever.k=5
+bm25_retriever.k= bm25_retriever_top_k
 
 # Combine
 ensemble_retriever = EnsembleRetriever(
     retrievers = [faiss_retriever, bm25_retriever],     # можно bm25 попробовать через MultiQueryRetriever погонять
-    weights=[0.5, 0.5],
+    weights=[ensemble_faiss_weight, ensemble_bm25_weight],
     id_key = "row"                                      # from metadata
 )
 
-# and reranker
-reranker = FlashrankRerank(client=Ranker(model_name="ms-marco-MultiBERT-L-12"))
-reranker.top_n=3
+# and reranker and top_n
+reranker = FlashrankRerank(client=Ranker(model_name=ranker_model))
+reranker.top_n= flash_reranker_top_n
 compression_retriever = ContextualCompressionRetriever(
     base_compressor=reranker, base_retriever=ensemble_retriever,
 )
