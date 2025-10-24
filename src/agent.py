@@ -1,13 +1,17 @@
 import os
+from typing import List, Annotated
 
 from flashrank import Ranker
 from langchain.retrievers import EnsembleRetriever, ContextualCompressionRetriever
 from langchain.tools import tool
 from langchain_community.document_compressors import FlashrankRerank
-from langchain_core.messages import HumanMessage
+from langchain_core.documents import Document
+from langchain_core.messages import HumanMessage, ToolMessage
 from langchain_core.runnables import RunnableConfig
 from langfuse.langchain import CallbackHandler
-from langgraph.prebuilt import create_react_agent
+from langgraph.prebuilt import create_react_agent, InjectedState
+from langgraph.prebuilt.chat_agent_executor import AgentState
+from langgraph.types import Command
 
 from src.bm25_store import BM25Store
 from src.generator import LLMGenerator
@@ -48,6 +52,9 @@ compression_retriever = ContextualCompressionRetriever(
 
 model = LLMGenerator().model()
 
+class ChiefAgentState(AgentState):
+    retrieved: List[Document]
+
 
 @tool
 def cookbook(query: str):
@@ -58,7 +65,7 @@ def cookbook(query: str):
     print(f"RAG Q: {query}")
     retrieved_docs = compression_retriever.invoke(query)
     for r in retrieved_docs:
-        print(f"retrieve_hybrid: row={r.metadata['row']} => {r.metadata['title']}")
+        print(f"compression_retriever: row={r.metadata['row']} => {r.metadata['title']}")
     docs_content = "\n\n".join(doc.page_content for doc in retrieved_docs)
     return docs_content
 
@@ -66,6 +73,7 @@ def cookbook(query: str):
 agent = create_react_agent(
     model=model,
     tools=[cookbook],
+    state_schema=ChiefAgentState,
     prompt=(
         "Ты повар, который разбирается в любой кухне."
         "Используй рецепты только из кулинарной книги для ответа. Если рецепта нет, то спроси клиента не хочет ли он чего-то еще?"
@@ -74,8 +82,12 @@ agent = create_react_agent(
         "Для форматирования ответа надо применять markdown."
     ),
 )
+
 invoked = agent.invoke(
-    input={"messages": [HumanMessage("Хочется чего-то острого, горячего с чили и свининой")]},
+    input = ChiefAgentState(
+        messages=[HumanMessage("Хочется чего-то острого, горячего с чили и свининой")],
+        retrieved = []
+    ),
     config=RunnableConfig(
         callbacks=graph_callbacks
     )
