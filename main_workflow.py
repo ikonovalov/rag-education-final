@@ -3,12 +3,16 @@ import re
 from pathlib import Path
 
 import streamlit as st
+from langchain_core.callbacks import UsageMetadataCallbackHandler
 from langchain_core.runnables import RunnableConfig
 
 if "graph" not in st.session_state:
     from src.rag_pipeline import (graph, graph_callbacks)
     st.session_state.graph=graph
-    st.session_state.graph_callbacks=graph_callbacks
+    st.session_state.usage_callback = UsageMetadataCallbackHandler()
+    st.session_state.graph_callbacks=graph_callbacks + [st.session_state.usage_callback]
+    print(UsageMetadataCallbackHandler())
+    print(f"Callbacks: {st.session_state.graph_callbacks}")
 
 
 # Инициализация истории чата в session_state
@@ -41,6 +45,7 @@ if prompt := st.chat_input("Давай поговорим о еде"):
     ))
     ai_answer = graph_response["answer"]
     print(ai_answer)
+    print(st.session_state.usage_callback.usage_metadata)
 
 
     # Отображение ответа ассистента
