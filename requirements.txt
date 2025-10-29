@@ -4,6 +4,7 @@ nltk
 streamlit
 flashrank
 rank_bm25
+ragas
 
 langchain
 langgraph
